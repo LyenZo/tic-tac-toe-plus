@@ -1,0 +1,163 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { Link } from 'expo-router';
+
+export default function PantallaJuego() {
+  // Estado para el tablero: un array de 9 posiciones inicialmente vacías (null)
+  const [board, setBoard] = useState(Array(9).fill(null));
+  // Estado para saber de quién es el turno (True = X, False = O)
+  const [isXNext, setIsXNext] = useState(true);
+
+  // Función para verificar si hay un ganador
+  const calcularGanador = (cuadrados) => {
+    const lineasGanadoras = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontales
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Verticales
+      [0, 4, 8], [2, 4, 6]             // Diagonales
+    ];
+
+    for (let i = 0; i < lineasGanadoras.length; i++) {
+      const [a, b, c] = lineasGanadoras[i];
+      if (cuadrados[a] && cuadrados[a] === cuadrados[b] && cuadrados[a] === cuadrados[c]) {
+        return cuadrados[a]; // Retorna 'X' o 'O'
+      }
+    }
+    return null;
+  };
+
+  const ganador = calcularGanador(board);
+  // Si no hay ganador y no quedan espacios vacíos, es un empate
+  const esEmpate = !ganador && board.every((cuadrado) => cuadrado !== null);
+
+  // Manejar el clic en un cuadro
+  const handlePress = (index) => {
+    // Si ya tiene dueño o ya hay un ganador, no hacemos nada
+    if (board[index] || ganador) return;
+
+    const nuevoTablero = [...board];
+    nuevoTablero[index] = isXNext ? '❌' : '⭕';
+    setBoard(nuevoTablero);
+    setIsXNext(!isXNext); // Cambiar turno
+  };
+
+  // Reiniciar el juego
+  const reiniciarJuego = () => {
+    setBoard(Array(9).fill(null));
+    setIsXNext(true);
+  };
+
+  // Renderizar un cuadro individual
+  const renderCuadro = (index) => {
+    return (
+      <Pressable 
+        style={styles.cuadro} 
+        onPress={() => handlePress(index)}
+      >
+        <Text style={styles.textoCuadro}>{board[index]}</Text>
+      </Pressable>
+    );
+  };
+
+  // Texto del estado actual del juego
+  let estadoTexto = `Turno de: ${isXNext ? '❌' : '⭕'}`;
+  if (ganador) {
+    estadoTexto = `¡Ganador: ${ganador}! 🎉`;
+  } else if (esEmpate) {
+    estadoTexto = '¡Es un empate! 🤝';
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.status}>{estadoTexto}</Text>
+
+      {/* Tablero de 3x3 */}
+      <View style={styles.tablero}>
+        <View style={styles.fila}>
+          {renderCuadro(0)}
+          {renderCuadro(1)}
+          {renderCuadro(2)}
+        </View>
+        <View style={styles.fila}>
+          {renderCuadro(3)}
+          {renderCuadro(4)}
+          {renderCuadro(5)}
+        </View>
+        <View style={styles.fila}>
+          {renderCuadro(6)}
+          {renderCuadro(7)}
+          {renderCuadro(8)}
+        </View>
+      </View>
+
+      {/* Botones de control */}
+      <View style={styles.areaBotones}>
+        <Pressable style={styles.buttonReset} onPress={reiniciarJuego}>
+          <Text style={styles.buttonText}>Reiniciar</Text>
+        </Pressable>
+
+        <Link href="/" asChild>
+          <Pressable style={styles.buttonBack}>
+            <Text style={styles.buttonText}>Menú Principal</Text>
+          </Pressable>
+        </Link>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#1e1e2e',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  status: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 30,
+  },
+  tablero: {
+    backgroundColor: '#313244',
+    padding: 10,
+    borderRadius: 16,
+    marginBottom: 30,
+  },
+  fila: {
+    flexDirection: 'row',
+  },
+  cuadro: {
+    width: 90,
+    height: 90,
+    backgroundColor: '#181825',
+    margin: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+  },
+  textoCuadro: {
+    fontSize: 36,
+  },
+  areaBotones: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  buttonReset: {
+    backgroundColor: '#a6e3a1', // Verde pastel
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 12,
+  },
+  buttonBack: {
+    backgroundColor: '#f38ba8', // Rojo pastel
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 12,
+  },
+  buttonText: {
+    color: '#11111b',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
