@@ -18,6 +18,16 @@ export default function MenuPrincipal() {
         <View style={styles.dot} />
       </View>
 
+      <Link href="/cpu" asChild>
+        <Pressable style={({ pressed }) => [styles.pressable, pressed && styles.buttonPressed]}>
+          <View style={styles.buttonLocal2}>
+            <Text style={styles.buttonTextDark}>     Contra CPU     </Text>
+          </View>
+        </Pressable>
+      </Link>
+
+<View style={styles.divider} />
+
       <Link href="/game" asChild>
         <Pressable style={({ pressed }) => [styles.pressable, pressed && styles.buttonPressed]}>
           <View style={styles.buttonLocal}>
@@ -111,6 +121,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
     backgroundColor: '#a6e3a1',
+  },
+  buttonLocal2: {
+    width: '100%',
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+    backgroundColor: '#f38ba8',
   },
   buttonOnline: {
     width: '100%',

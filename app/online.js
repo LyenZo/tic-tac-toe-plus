@@ -4,7 +4,7 @@ import { Link } from 'expo-router';
 import { io } from 'socket.io-client';
 
 
-const SERVIDOR_URL = 'http://192.168.100.100:3000';
+const SERVIDOR_URL = 'https://tic-tac-toe-server-tat4.onrender.com';
 
 export default function PantallaOnline() {
   const [board, setBoard] = useState(Array(9).fill(null));
